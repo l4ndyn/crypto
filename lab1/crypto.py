@@ -10,31 +10,115 @@ SUNet: <SUNet ID>
 Replace this with a description of the program.
 """
 import utils
+import math
 
 # Caesar Cipher
 
 period = ord('Z') - ord('A') + 1
-offset = ord('A')
+uppercase_offset = ord('A')
+lowercase_offset = ord('a')
+
+def shift_by(char, num):
+    offset = lowercase_offset if char.islower() else uppercase_offset
+    return chr((ord(char) - offset + num) % period + offset)
 
 def encrypt_caesar(plaintext):
-    return "".join([chr((ord(c) - offset + 3) % period + offset) if c.isalpha() else c for c in plaintext])
-
+    return ''.join([shift_by(c, 3) if c.isalpha() else c for c in plaintext])
 
 def decrypt_caesar(ciphertext):
-    return "".join([chr((ord(c) - offset - 3) % period + offset) if c.isalpha() else c for c in ciphertext])
+    return ''.join([shift_by(c, -3) if c.isalpha() else c for c in ciphertext])
 
 
 # Vigenere Cipher
 
+def letter_value(letter):
+    return ord(letter) - lowercase_offset if letter.islower() else ord(letter) - uppercase_offset
+
+def check_keyword(keyword):
+    if len(keyword) == 0:
+            raise utils.Error('The keyword can\'t be empty!')
+    if not keyword.isalpha():
+        raise utils.Error('The keyword may only contain letters!')
+
 def encrypt_vigenere(plaintext, keyword):
-    return "".join([chr((ord(c) - offset + ord(keyword[i % len(keyword)]) - offset) % period + offset)
+    check_keyword(keyword)
+
+    return ''.join([shift_by(c, letter_value(keyword[i % len(keyword)]))
         if c.isalpha() else c for (i, c) in enumerate(plaintext)])
 
-
 def decrypt_vigenere(ciphertext, keyword):
-    return "".join([chr((ord(c) - offset - (ord(keyword[i % len(keyword)]) - offset)) % period + offset)
+    check_keyword(keyword)
+
+    return ''.join([shift_by(c, -letter_value(keyword[i % len(keyword)]))
         if c.isalpha() else c for (i, c) in enumerate(ciphertext)])
 
+
+# Scytale Cipher
+
+def check_circumference(circumference):
+    if circumference != int(circumference):
+        raise utils.Error('The circumference must be an integer!')
+    if circumference <= 0:
+        raise utils.Error('The circumference must greater than zero!')
+
+def encrypt_scytale(plaintext, circumference):
+    check_circumference(circumference)
+
+    return ''.join([''.join([plaintext[i * circumference + offset] 
+        for i in range(math.ceil((len(plaintext) - offset) / circumference))])
+        for offset in range(circumference)])
+
+def decrypt_scytale(ciphertext, circumference):
+    check_circumference(circumference)
+
+    return encrypt_scytale(ciphertext, math.ceil(len(ciphertext) / circumference))
+
+
+# Railfence Cipher
+
+def stride(size):
+        if size == 1:
+            return 1
+        return 2 * (size - 1)
+
+def encrypt_railfence(plaintext, circumference):
+    check_circumference(circumference)
+
+    cipher = ''
+    
+    for offset in range(circumference):
+        i = offset
+        use_lower_stride = (offset != circumference - 1)
+
+        while i < len(plaintext):
+            cipher += plaintext[i]
+
+            i += stride(circumference - offset) if use_lower_stride else stride(offset + 1)
+            if offset != 0 and offset != circumference - 1:
+                use_lower_stride = not use_lower_stride
+
+    return cipher
+
+def decrypt_railfence(ciphertext, circumference):
+    check_circumference(circumference)
+
+    plaintext = [0] * len(ciphertext)
+    cipher_i = 0
+
+    for offset in range(circumference):
+        text_i = offset
+        use_lower_stride = (offset != circumference - 1)
+
+        while text_i < len(ciphertext):
+            plaintext[text_i] = ciphertext[cipher_i]
+            text_i += stride(circumference - offset) if use_lower_stride else stride(offset + 1)
+
+            if offset != 0 and offset != circumference - 1:
+                use_lower_stride = not use_lower_stride
+
+            cipher_i += 1
+
+    return ''.join(plaintext)
 
 # Merkle-Hellman Knapsack Cryptosystem
 
