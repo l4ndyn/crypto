@@ -13,38 +13,27 @@ import utils
 
 # Caesar Cipher
 
-def encrypt_caesar(plaintext):
-    """Encrypt plaintext using a Caesar cipher.
+period = ord('Z') - ord('A') + 1
+offset = ord('A')
 
-    Add more implementation details here.
-    """
-    raise NotImplementedError  # Your implementation here
+def encrypt_caesar(plaintext):
+    return "".join([chr((ord(c) - offset + 3) % period + offset) if c.isalpha() else c for c in plaintext])
 
 
 def decrypt_caesar(ciphertext):
-    """Decrypt a ciphertext using a Caesar cipher.
-
-    Add more implementation details here.
-    """
-    raise NotImplementedError  # Your implementation here
+    return "".join([chr((ord(c) - offset - 3) % period + offset) if c.isalpha() else c for c in ciphertext])
 
 
 # Vigenere Cipher
 
 def encrypt_vigenere(plaintext, keyword):
-    """Encrypt plaintext using a Vigenere cipher with a keyword.
-
-    Add more implementation details here.
-    """
-    raise NotImplementedError  # Your implementation here
+    return "".join([chr((ord(c) - offset + ord(keyword[i % len(keyword)]) - offset) % period + offset)
+        if c.isalpha() else c for (i, c) in enumerate(plaintext)])
 
 
 def decrypt_vigenere(ciphertext, keyword):
-    """Decrypt ciphertext using a Vigenere cipher with a keyword.
-
-    Add more implementation details here.
-    """
-    raise NotImplementedError  # Your implementation here
+    return "".join([chr((ord(c) - offset - (ord(keyword[i % len(keyword)]) - offset)) % period + offset)
+        if c.isalpha() else c for (i, c) in enumerate(ciphertext)])
 
 
 # Merkle-Hellman Knapsack Cryptosystem
