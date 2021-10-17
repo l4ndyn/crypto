@@ -11,6 +11,7 @@ Replace this with a description of the program.
 """
 import utils
 import math
+import itertools
 
 # Caesar Cipher
 
@@ -61,17 +62,19 @@ def check_circumference(circumference):
     if circumference <= 0:
         raise utils.Error('The circumference must greater than zero!')
 
-def encrypt_scytale(plaintext, circumference):
+def encrypt_scytale(plaintext, circumference, binary=False):
     check_circumference(circumference)
 
-    return ''.join([''.join([plaintext[i * circumference + offset] 
+    res = list(itertools.chain(*[([plaintext[i * circumference + offset] 
         for i in range(math.ceil((len(plaintext) - offset) / circumference))])
-        for offset in range(circumference)])
+        for offset in range(circumference)]))
 
-def decrypt_scytale(ciphertext, circumference):
+    return ''.join(res) if not binary else res
+
+def decrypt_scytale(ciphertext, circumference, binary=False):
     check_circumference(circumference)
 
-    return encrypt_scytale(ciphertext, math.ceil(len(ciphertext) / circumference))
+    return encrypt_scytale(ciphertext, math.ceil(len(ciphertext) / circumference), binary)
 
 
 # Railfence Cipher
