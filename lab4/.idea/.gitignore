@@ -1,4 +1,6 @@
-.gradle
-*/build/*
-.idea/*
-/out/
+/.gradle
+/.idea
+*/build/
+gradlew*
+/gradle
+*.log
