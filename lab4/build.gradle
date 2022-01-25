@@ -1,0 +1,18 @@
+allprojects {
+    group='edu.bbte.crypto.baim1898'
+    version='1.0-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    dependencies {
+    }
+}

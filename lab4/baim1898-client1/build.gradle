@@ -1,0 +1,5 @@
+apply plugin: 'application'
+
+application {
+    mainClassName = 'edu.bbte.crypto.baim1898.client1.Main'
+}
